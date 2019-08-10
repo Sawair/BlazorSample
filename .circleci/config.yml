@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:3.0-disco
+
+    steps:
+      - checkout
+
+      - run:
+          name: Restore
+          command: dotnet restore
+
+      - run:
+          name: Build
+          command: dotnet build
