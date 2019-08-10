@@ -1,0 +1,71 @@
+﻿@page "/exchange"
+@using BlazorSample.Data
+
+@inject NbpService _nbpService
+
+<h1>Exchange Calculator</h1>
+@if (CurrencyCodes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@_model" OnSubmit="@Calculate">
+        <p>
+            <label>Value to exchange:</label>
+            <InputNumber type="text" @bind-Value="@_model.FromValue" />
+        </p>
+        <p>
+            <label>Currency of value to exchange:</label>
+            <InputSelect @bind-Value="@_model.FromCurrency">
+                <option selected="selected" value="@NbpService.BaseCurrency">@NbpService.BaseCurrency</option>
+                @foreach (var currCode in CurrencyCodes)
+                    {
+                    <option value="@currCode">@currCode</option>
+                    }
+                /**/
+            </InputSelect>
+        </p>
+        <p>
+            <label>Target Currency:</label>
+            <InputSelect @bind-Value="@_model.ToCurrency">
+                <option selected="selected" value="@NbpService.BaseCurrency">@NbpService.BaseCurrency</option>
+                @foreach (var currCode in CurrencyCodes)
+                    {
+                    <option value="@currCode">@currCode</option>
+                    }
+                /**/
+            </InputSelect>
+        </p>
+        <button type="submit" class="btn-info">Calculate</button>
+    </EditForm>
+}
+
+@if (_model.ToValue.HasValue)
+{
+    <p>Value in new currency*: @_model.ToValue.Value <br /></p>
+    @if (_model.FromCurrency != NbpService.BaseCurrency || _model.ToCurrency != NbpService.BaseCurrency)
+    {
+        <p>With in the middle exchange to PLN</p>
+    }
+
+    <p>* Rating values base from NBP "table a" mid value to PLN</p>
+}
+
+@code {
+
+    private ExchangeModel _model = new ExchangeModel() { FromCurrency = NbpService.BaseCurrency, ToCurrency = NbpService.BaseCurrency, FromValue = 0.00M };
+
+    public IEnumerable<string> CurrencyCodes { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        CurrencyCodes = await _nbpService.GetCurrencyCodesAsync();
+    }
+
+    public void Calculate()
+    {
+        var rate = _nbpService.GetRate(_model.FromCurrency, _model.ToCurrency);
+        _model.ToValue = Math.Round(_model.FromValue * rate, 2);
+    }
+}
