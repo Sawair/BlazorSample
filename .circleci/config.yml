@@ -4,14 +4,14 @@ jobs:
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.0-disco
 
-    working_directory: /tmp
+    working_directory: /src
 
     steps:
       - checkout
       
       - store_artifacts:
-        path: /tmp
-        destination: /src
+          path: /src
+          destination: /src
 
       - run:
           name: Restore
@@ -19,8 +19,8 @@ jobs:
 
       - run:
           name: Build
-          command: dotnet build -o /tmp/app
+          command: dotnet build -o /src/app
 
       - store_artifacts:
-        path: /tmp/app
-        destination: /app
+          path: /src/app
+          destination: /app
