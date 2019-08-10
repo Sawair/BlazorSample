@@ -8,7 +8,10 @@ executors:
 
 jobs:
   build:
-    executor: sdk-executor
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:3.0-disco
+
+    working_directory: /src
 
     steps:
       - checkout
@@ -30,13 +33,26 @@ jobs:
           path: build
 
   test:
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:3.0-disco
+
+    working_directory: /src
+    
+    steps:
       - attach_workspace:
           at: /src/build
+
       - run:
           name: Test
           command: dotnet test
 
   publish:
+    docker:
+      - image: mcr.microsoft.com/dotnet/core/sdk:3.0-disco
+
+    working_directory: /src
+    
+    steps:
       - run:
           name: Publish
           command: dotnet publish -o /src/app
