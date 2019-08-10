@@ -30,7 +30,7 @@ jobs:
           path: build
 
   test:
-      -attach_workspace:
+      - attach_workspace:
           at: /src/build
       - run:
           name: Test
