@@ -1,10 +1,14 @@
 version: 2
-jobs:
-  build:
+
+executors:
+  sdk-executor:
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.0-disco
-
     working_directory: /src
+
+jobs:
+  build:
+    executor: sdk-executor
 
     steps:
       - checkout
@@ -19,8 +23,36 @@ jobs:
 
       - run:
           name: Build
-          command: dotnet build -o /src/app
+          command: dotnet build -o /src/build
+
+      - persist_to_workspace:
+          root: /src
+          path: build
+
+  test:
+      -attach_workspace:
+          at: /src/build
+      - run:
+          name: Test
+          command: dotnet test
+
+  publish:
+      - run:
+          name: Publish
+          command: dotnet publish -o /src/app
 
       - store_artifacts:
           path: /src/app
           destination: /app
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
+      - test:
+          requires:
+            -  build
+      -publish:
+          requires:
+            -  test
