@@ -9,6 +9,7 @@ namespace BlazorSample.Data
     public class NbpService
     {
         public const string BaseCurrency = "PLN";
+        private const string NbpApiTableAPath = @"http://api.nbp.pl/api/exchangerates/tables/a?format=json";
 
         public async Task<DateTime> GetEffectiveDateAsync()
         {
@@ -44,7 +45,7 @@ namespace BlazorSample.Data
             var httpClient = new HttpClient();
 
             var httpResponseMessage =
-                await httpClient.GetAsync(@"http://api.nbp.pl/api/exchangerates/tables/a?format=json");
+                await httpClient.GetAsync(NbpApiTableAPath);
 
             if (httpResponseMessage.IsSuccessStatusCode)
             {
