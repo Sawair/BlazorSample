@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BlazorSample.Data;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Xunit;
 
 namespace BlazorSample.Tests
@@ -21,8 +22,9 @@ namespace BlazorSample.Tests
             var nbpService = new NbpService();
 
             nbpService.RefreshAsync().Wait();
+            var today = DateTime.Today;
 
-            Assert.Equal(DateTime.Today, nbpService.GetEffectiveDateAsync().Result);
+            Assert.Equal(today, nbpService.GetEffectiveDateAsync().Result + NbpService.NumberOfDaysFromLastNbpUpdate());
         }
 
         [Fact]
@@ -48,7 +50,7 @@ namespace BlazorSample.Tests
                 new object[] {"THB" },
                 new object[] {"USD"},
                 new object[] {"AUD"},
-                new object[] {"HDK"},
+                new object[] {"HKD"},
                 new object[] {"CAD"},
                 new object[] {"NZD"},
                 new object[] {"SGD"},
@@ -61,7 +63,7 @@ namespace BlazorSample.Tests
                 new object[] {"CZK"},
                 new object[] {"DKK"},
                 new object[] {"ISK"},
-                new object[] {"NDK"},
+                new object[] {"NOK"},
                 new object[] {"SEK"},
                 new object[] {"HRK"},
                 new object[] {"RON"},

@@ -44,7 +44,7 @@ jobs:
     
     steps:
       - attach_workspace:
-          at: /src/build
+          at: /src
 
       - run:
           name: Test
@@ -57,6 +57,9 @@ jobs:
     working_directory: /src
     
     steps:
+      - attach_workspace:
+          at: /src
+          
       - run:
           name: Publish
           command: dotnet publish -o /src/app

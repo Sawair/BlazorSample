@@ -31,9 +31,27 @@ namespace BlazorSample.Data
             }
         }
 
-        private bool NeedsToRefresh => _nbpTable == null || (_nbpTable.EffectiveDate.Date - DateTime.Now) > TimeSpan.FromDays(1);
+        private bool NeedsToRefresh => _nbpTable == null || (_nbpTable.EffectiveDate.Date - DateTime.Now) > NumberOfDaysFromLastNbpUpdate();
 
         private NbpTable _nbpTable;
+
+        /// <summary>
+        /// Function don't count public holiday's and other days off of NBP, only weekends
+        /// </summary>
+        /// <param name="today"></param>
+        /// <returns></returns>
+        public static TimeSpan NumberOfDaysFromLastNbpUpdate()
+        {
+            switch (DateTime.Today.DayOfWeek)
+            {
+                case DayOfWeek.Saturday:
+                    return TimeSpan.FromDays(1);
+                case DayOfWeek.Sunday:
+                    return TimeSpan.FromDays(2);
+                default:
+                    return TimeSpan.FromDays(0);
+            }
+        }
 
         public async Task RefreshAsync(bool force = false)
         {
